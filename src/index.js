@@ -1,4 +1,12 @@
 import ReactDOM from "react-dom";
-import App from "./App";
+import MainPage from "./MainPage";
+import GamePage from "./GamePage";
 
-ReactDOM.render(<App></App>, document.getElementById("root"));
+ReactDOM.render(
+  <div>
+    <MainPage />
+    <GamePage />
+  </div>,
+
+  document.getElementById("root")
+);
