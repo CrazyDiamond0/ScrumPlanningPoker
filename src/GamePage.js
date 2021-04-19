@@ -1,20 +1,38 @@
 import setcardvalue from "./components/setcardvalue";
 import didfinish from "./components/didfinish";
-import getlist from "./components/getlist";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import firebase from "./components/firebase";
+import Cookies from "js-cookie";
 
 export default function GamePage() {
+  const [allvalues, setAllvalues] = useState([]);
+  const [result, setResult] = useState("Result");
+
   const looper = async () => {
     setTimeout(() => {
       getlist();
       looper();
     }, 1000);
   };
-
+  useEffect(async () => {
+    getlist();
+  }, []);
   return (
     <div>
-      <div onClick={() => setcardvalue(0)}>0</div>
-      <div onClick={() => setcardvalue(1)}>1</div>
+      <div
+        onClick={() => {
+          setcardvalue(0);
+        }}
+      >
+        0
+      </div>
+      <div
+        onClick={() => {
+          setcardvalue(1);
+        }}
+      >
+        1
+      </div>
       <div onClick={() => setcardvalue(2)}>2</div>
       <div onClick={() => setcardvalue(3)}>3</div>
       <div onClick={() => setcardvalue(5)}>5</div>
@@ -26,8 +44,43 @@ export default function GamePage() {
       <div onClick={() => setcardvalue(89)}>89</div>
       <div onClick={() => setcardvalue("?")}>?</div>
       <div onClick={() => didfinish()}>Finish</div>
-
+      <div>{allvalues}</div>
+      <div>{result}</div>
       <button onClick={() => looper()}>Get List</button>
     </div>
   );
+
+  function getlist() {
+    const user = Cookies.get("username");
+    const room = Cookies.get("yourroom");
+    const allvalues = [];
+    firebase
+      .database()
+      .ref()
+      .on("value", (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          console.log(childSnapshot.child("users").val());
+          didallfinish(childSnapshot.child("users").val());
+        });
+      });
+    console.log(allvalues);
+    allvalues.splice(0, allvalues.length);
+  }
+
+  function didallfinish(object) {
+    let isalltrue = 0;
+    let average = 0;
+    const thisobject = Object.values(object);
+    for (let i = 0; i < thisobject.length; i++) {
+      console.log(Object.values(thisobject[i]));
+      if (Object.values(thisobject[i])[0] === true) {
+        isalltrue++;
+        average += Object.values(thisobject[i])[1];
+        console.log(average);
+      }
+    }
+    if (isalltrue === thisobject.length) {
+      setResult(`Everyone checked, Result: ${average / thisobject.length}`);
+    }
+  }
 }
