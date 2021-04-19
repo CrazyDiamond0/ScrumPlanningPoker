@@ -1,18 +1,75 @@
-import React, { useState } from "react";
-import database from "./components/database";
+import React, { useState, useEffect } from "react";
+//import firebase from "./components/firebase";
+import GamePage from "./GamePage";
+import Cookies from "js-cookie";
 import joinuser from "./components/joinuser";
+import checkifexits from "./components/checkifexists";
+import deleteonescape from "./components/deleteonescape";
 
 export default function MainPage() {
+  useEffect(() => {
+    deleteonescape();
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id = urlParams.get("id");
+    if (id != null) {
+      setSumbitRoomNumber(true);
+    }
+  }, []);
+  const [roomdoesntexist, setRoomDoesntexist] = useState("");
   const [inputroomnumber, setInputroomnumber] = useState(0);
-
+  const [submiroomnumber, setSumbitRoomNumber] = useState(false);
   const handleChange = (e) => {
     setInputroomnumber(e.target.value);
+    e.preventDefault();
   };
   return (
     <div>
-      <input type="number" value={inputroomnumber} onChange={handleChange} />
-      <button onClick={() => database()}>Create Room</button>
-      <button onClick={() => joinuser(inputroomnumber)}>Join Room</button>
+      {submiroomnumber === true ? (
+        <GamePage />
+      ) : (
+        <div>
+          <form onSubmit={joinGamePage}>
+            <input
+              type="number"
+              value={inputroomnumber}
+              onChange={handleChange}
+            />
+            <input type="submit" value="Submit"></input>
+          </form>
+          <button onClick={() => createGamePage()}>Create Room</button>
+          <button
+            onClick={() =>
+              checkifexits(inputroomnumber).then((value) => console.log(value))
+            }
+          >
+            functiontest
+          </button>
+          <div>{roomdoesntexist}</div>
+        </div>
+      )}
     </div>
   );
+
+  function createGamePage() {
+    const random = Math.floor(Math.random() * (10000 - 1000) + 1000);
+    Cookies.set("username", "master");
+    Cookies.set("yourroom", "room" + random);
+    window.location.href = `/?id=${random}`;
+  }
+
+  function joinGamePage(e) {
+    checkifexits(inputroomnumber).then((value) => {
+      if (value === true) {
+        console.log("penis");
+        checkifexits(inputroomnumber);
+        setSumbitRoomNumber(true);
+        joinuser(inputroomnumber);
+        window.location.href = `/?id=${inputroomnumber}`;
+      } else {
+        setRoomDoesntexist("Room Doesn't exist");
+      }
+    });
+    e.preventDefault();
+  }
 }

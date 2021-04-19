@@ -1,12 +1,10 @@
 import firebase from "./firebase";
-import Cookies from "js-cookie";
 
-export default function database() {
-  Cookies.set("username", "master");
-  const random = Math.floor(Math.random() * (10000 - 1000) + 1000);
-  Cookies.set("yourroom", "room" + random);
+export default function database(random) {
+  console.log("AM INTRAT IN DB");
   const room = {
-    roomsubject: "idk",
+    roomsubject: "null",
+    result: 0,
     users: {
       master: {
         value: 0,

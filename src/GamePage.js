@@ -3,10 +3,15 @@ import didfinish from "./components/didfinish";
 import { useEffect, useState } from "react";
 import firebase from "./components/firebase";
 import Cookies from "js-cookie";
+import database from "./components/database";
+import joinuser from "./components/joinuser";
+import checkifexists from "./components/checkifexists";
+import deleteonescape from "./components/deleteonescape";
 
 export default function GamePage() {
   const [allvalues, setAllvalues] = useState([]);
   const [result, setResult] = useState("Result");
+  const [roomsubject, setRoomsubject] = useState("");
 
   const looper = async () => {
     setTimeout(() => {
@@ -14,25 +19,44 @@ export default function GamePage() {
       looper();
     }, 1000);
   };
-  useEffect(async () => {
+
+  useEffect(() => {
+    deleteonescape();
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const id = urlParams.get("id");
+    checkifexists(id).then((value) => {
+      if (value === true || Cookies.get("username") === "master") {
+        Cookies.set("yourroom", "room" + id);
+        if (Cookies.get("username") === undefined) {
+          joinuser(Cookies.get("yourroom"));
+        }
+        if (Cookies.get("username") === "master") {
+          database(id);
+        }
+      } else {
+        window.location.href = `/`;
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     getlist();
   }, []);
+
+  function handleChange(e) {
+    setRoomsubject(e.target.value);
+  }
   return (
     <div>
-      <div
-        onClick={() => {
-          setcardvalue(0);
-        }}
-      >
-        0
-      </div>
-      <div
-        onClick={() => {
-          setcardvalue(1);
-        }}
-      >
-        1
-      </div>
+      <form>
+        <label>Set room subject</label>
+        <input type="text" value={roomsubject} onChange={handleChange}></input>
+        <input type="submit" />
+      </form>
+
+      <div onClick={() => setcardvalue(0)}>0</div>
+      <div onClick={() => setcardvalue(1)}>1</div>
       <div onClick={() => setcardvalue(2)}>2</div>
       <div onClick={() => setcardvalue(3)}>3</div>
       <div onClick={() => setcardvalue(5)}>5</div>
@@ -59,11 +83,10 @@ export default function GamePage() {
       .ref()
       .on("value", (snapshot) => {
         snapshot.forEach((childSnapshot) => {
-          console.log(childSnapshot.child("users").val());
           didallfinish(childSnapshot.child("users").val());
         });
       });
-    console.log(allvalues);
+    //console.log(allvalues);
     allvalues.splice(0, allvalues.length);
   }
 
@@ -72,11 +95,11 @@ export default function GamePage() {
     let average = 0;
     const thisobject = Object.values(object);
     for (let i = 0; i < thisobject.length; i++) {
-      console.log(Object.values(thisobject[i]));
+      //console.log(Object.values(thisobject[i]));
       if (Object.values(thisobject[i])[0] === true) {
         isalltrue++;
         average += Object.values(thisobject[i])[1];
-        console.log(average);
+        //console.log(average);
       }
     }
     if (isalltrue === thisobject.length) {

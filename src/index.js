@@ -5,7 +5,6 @@ import GamePage from "./GamePage";
 ReactDOM.render(
   <div>
     <MainPage />
-    <GamePage />
   </div>,
 
   document.getElementById("root")
