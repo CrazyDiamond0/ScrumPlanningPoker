@@ -1,15 +1,15 @@
 import firebase from "./firebase";
 import Cookies from "js-cookie";
 
-export default function joinuser(roomnumber) {
+export default async function joinuser() {
   const random = Math.floor(Math.random() * (10000 - 1000) + 1000);
-  Cookies.set("yourroom", "room" + roomnumber);
   Cookies.set("username", "user" + random);
   const user = {
     value: 0,
     didfinish: false,
   };
-  firebase
+  console.log("AM INTRAT IN JOIN USER");
+  await firebase
     .database()
     .ref(Cookies.get("yourroom") + "/users/" + Cookies.get("username"))
     .set(user);

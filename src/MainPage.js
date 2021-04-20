@@ -4,11 +4,9 @@ import GamePage from "./GamePage";
 import Cookies from "js-cookie";
 import joinuser from "./components/joinuser";
 import checkifexits from "./components/checkifexists";
-import deleteonescape from "./components/deleteonescape";
 
 export default function MainPage() {
   useEffect(() => {
-    deleteonescape();
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const id = urlParams.get("id");
@@ -29,14 +27,13 @@ export default function MainPage() {
         <GamePage />
       ) : (
         <div>
-          <form onSubmit={joinGamePage}>
-            <input
-              type="number"
-              value={inputroomnumber}
-              onChange={handleChange}
-            />
-            <input type="submit" value="Submit"></input>
-          </form>
+          <input
+            type="number"
+            value={inputroomnumber}
+            onChange={handleChange}
+          />
+          <button onClick={joinGamePage}>Join room</button>
+
           <button onClick={() => createGamePage()}>Create Room</button>
           <button
             onClick={() =>
@@ -58,18 +55,14 @@ export default function MainPage() {
     window.location.href = `/?id=${random}`;
   }
 
-  function joinGamePage(e) {
-    checkifexits(inputroomnumber).then((value) => {
+  async function joinGamePage() {
+    await checkifexits(inputroomnumber).then(async (value) => {
       if (value === true) {
-        console.log("penis");
-        checkifexits(inputroomnumber);
         setSumbitRoomNumber(true);
-        joinuser(inputroomnumber);
         window.location.href = `/?id=${inputroomnumber}`;
       } else {
         setRoomDoesntexist("Room Doesn't exist");
       }
     });
-    e.preventDefault();
   }
 }

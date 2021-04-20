@@ -1,16 +1,32 @@
 import Cookies from "js-cookie";
 import firebase from "./firebase";
 
-export default function deleteonescape() {
-  window.addEventListener("beforeunload", function (e) {
-    firebase.database
-      .ref(
-        "room" + Cookies.get("yourroom") + "/users/" + Cookies.get("username")
-      )
-      .remove();
+export default async function deleteonescape() {
+  await window.addEventListener("beforeunload", function (e) {
+    if (Cookies.get("username") !== "master") {
+      firebase
+        .database()
+        .ref(Cookies.get("yourroom") + "/users/" + Cookies.get("username"))
+        .set(null);
+    } else {
+      firebase.database().ref(Cookies.get("yourroom")).set(null);
+    }
+    Cookies.remove("username");
+    Cookies.remove("yourroom");
+    console.log("I  DIED");
   });
 
-  window.addEventListener("unload", function (event) {
-    firebase.database.ref("room" + Cookies.get("yourroom"));
+  await window.addEventListener("unload", function (event) {
+    if (Cookies.get("username") !== "master") {
+      firebase
+        .database()
+        .ref(Cookies.get("yourroom") + "/users/" + Cookies.get("username"))
+        .set(null);
+    } else {
+      firebase.database().ref(Cookies.get("yourroom")).set(null);
+    }
+    console.log("I  LEFT");
+    Cookies.remove("username");
+    Cookies.remove("yourroom");
   });
 }
