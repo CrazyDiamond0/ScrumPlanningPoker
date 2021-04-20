@@ -126,7 +126,7 @@ export default function GamePage() {
       </button>
     </div>
   );
-
+  //test
   function getSubject() {
     firebase
       .database()
