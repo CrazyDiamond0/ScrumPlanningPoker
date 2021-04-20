@@ -13,7 +13,7 @@ export default async function deleteonescape() {
     }
     Cookies.remove("username");
     Cookies.remove("yourroom");
-    console.log("I  DIED");
+    //console.log("I  DIED");
   });
 
   await window.addEventListener("unload", function (event) {
@@ -25,7 +25,7 @@ export default async function deleteonescape() {
     } else {
       firebase.database().ref(Cookies.get("yourroom")).set(null);
     }
-    console.log("I  LEFT");
+    //console.log("I  LEFT");
     Cookies.remove("username");
     Cookies.remove("yourroom");
   });

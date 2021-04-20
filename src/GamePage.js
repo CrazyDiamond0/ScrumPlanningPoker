@@ -15,12 +15,20 @@ export default function GamePage() {
   const [roomsubject, setRoomsubject] = useState("");
   const [buttonstatus, setButtonstatus] = useState(true);
   const [formhidden, setFormHidden] = useState(true);
+  const [userlist, setUserList] = useState([]);
+  const [resetbutton, setResetbutton] = useState(true);
 
-  const looper = async () => {};
+  function buttonReset() {
+    if (Cookies.get("username") === "master") {
+      setFormHidden(false);
+    }
+    setButtonstatus(true);
+  }
 
   useEffect(() => {
     if (Cookies.get("username") === "master") {
       setFormHidden(false);
+      setResetbutton(false);
     }
     deleteonescape();
     const queryString = window.location.search;
@@ -28,25 +36,28 @@ export default function GamePage() {
     const id = urlParams.get("id");
     Cookies.set("yourroom", "room" + id);
 
-    checkifexists(id).then((value) => {
+    checkifexists(id).then(async (value) => {
       if (value === true || Cookies.get("username") === "master") {
         if (Cookies.get("username") === undefined) {
-          joinuser();
+          await joinuser();
         }
         if (Cookies.get("username") === "master") {
-          database(id);
+          await database(id);
         }
       } else {
         window.location.href = `/`;
       }
     });
+    setTimeout(() => getSubject(), 2000);
+    setTimeout(() => getlist(), 2000);
+    setTimeout(() => getusers(), 2000);
   }, []);
 
   function handleChange(e) {
     setRoomsubject(e.target.value);
   }
   function selectSubject() {
-    console.log(roomsubject);
+    //console.log(roomsubject);
     selectSubjectFirebase(roomsubject);
     setFormHidden(true);
     setButtonstatus(false);
@@ -97,12 +108,22 @@ export default function GamePage() {
       <button disabled={buttonstatus} onClick={() => setcardvalue("?")}>
         ?
       </button>
-      <button disabled={buttonstatus} onClick={() => didfinish()}>
+      <button
+        disabled={buttonstatus}
+        onClick={() => {
+          didfinish();
+          setButtonstatus(true);
+        }}
+      >
         Finish
       </button>
       <div>{allvalues}</div>
       <div>{result}</div>
+      <div>{userlist}</div>
       <button onClick={() => getlist()}>Get List</button>
+      <button hidden={resetbutton} onClick={() => buttonReset()}>
+        Reset
+      </button>
     </div>
   );
 
@@ -116,15 +137,30 @@ export default function GamePage() {
             undefined &&
           snapshot.child(Cookies.get("yourroom")).val().roomsubject !== "null"
         ) {
+          setRoomsubject(
+            snapshot.child(Cookies.get("yourroom")).val().roomsubject
+          );
           setButtonstatus(false);
         }
       });
   }
+  function getusers() {
+    firebase
+      .database()
+      .ref()
+      .on("value", (snapshot) => {
+        setUserList(
+          Object.keys(
+            snapshot.child(Cookies.get("yourroom")).child("users").val()
+          )
+        );
+      });
+  }
 
-  function getlist() {
+  async function getlist() {
     // const user = Cookies.get("username");
     //const room = Cookies.get("yourroom");
-    firebase
+    await firebase
       .database()
       .ref()
       .on("value", (snapshot) => {
@@ -135,20 +171,34 @@ export default function GamePage() {
     //console.log(allvalues);
   }
 
-  function didallfinish(object) {
-    console.log(object[0]);
-    // let isalltrue = 0;
-    // let average = 0;
-    // for (let i = 0; i < object; i++) {
-    //   //console.log(Object.values(thisobject[i]));
-    //   if (Object.values(thisobject[i])[0] === true) {
-    //     isalltrue++;
-    //     average += Object.values(thisobject[i])[1];
-    //     //console.log(average);
+  async function didallfinish(object) {
+    // const objectarray = [...Object.keys(object)];
+
+    // for (let element of objectarray) {
+    //   if (object[element]["didfinish"] === true) {
+    //     console.log("penis");
     //   }
     // }
-    // if (isalltrue === thisobject.length) {
-    //   setResult(`Everyone checked, Result: ${average / thisobject.length}`);
-    // }
+    const thisobject = Object.values(object);
+    console.log(thisobject);
+    let isalltrue = 0;
+    let average = 0;
+    for (let i = 0; i < thisobject.length; i++) {
+      console.log(Object.values(thisobject[i]));
+      if (Object.values(thisobject[i])[0] === true) {
+        isalltrue++;
+        if (Object.values(thisobject[i])[1] !== "?") {
+          average += Object.values(thisobject[i])[1];
+        }
+        //console.log(average);
+      }
+    }
+    console.log(isalltrue);
+    console.log(thisobject.length);
+    if (isalltrue === thisobject.length) {
+      setResult(`Everyone checked, Result: ${average / thisobject.length}`);
+    } else {
+      setResult("Result");
+    }
   }
 }
