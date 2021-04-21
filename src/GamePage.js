@@ -375,7 +375,7 @@ export default function GamePage() {
         setResult("Waiting for everyone to check");
       }
     } else {
-      setResult("There is only one user in this lobby");
+      setResult("There is only one user in the lobby");
     }
   }
 }
