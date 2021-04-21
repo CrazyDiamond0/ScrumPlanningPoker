@@ -5,10 +5,11 @@ export default async function joinuser() {
   const random = Math.floor(Math.random() * (10000 - 1000) + 1000);
   Cookies.set("username", "user" + random);
   const user = {
-    value: 0,
+    value: "null",
     didfinish: false,
+    allowselecting: false,
   };
-  console.log("AM INTRAT IN JOIN USER");
+  //console.log("AM INTRAT IN JOIN USER");
   await firebase
     .database()
     .ref(Cookies.get("yourroom") + "/users/" + Cookies.get("username"))

@@ -11,10 +11,10 @@ export default async function checkifexits(number) {
       if (snapshot.exists()) {
         var temp = snapshot.val();
         values = [...Object.keys(temp)];
-        console.log("inside:", values);
+        //console.log("inside:", values);
       }
     });
-  console.log("outside", values);
+  //console.log("outside", values);
   values.forEach((element) => {
     if (element === room) {
       temp = true;

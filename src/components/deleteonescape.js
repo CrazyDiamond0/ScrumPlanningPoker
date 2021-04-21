@@ -9,6 +9,11 @@ export default async function deleteonescape() {
         .ref(Cookies.get("yourroom") + "/users/" + Cookies.get("username"))
         .set(null);
     } else {
+      firebase
+        .database()
+        .ref(Cookies.get("yourroom") + "/killapp/")
+        .set(true);
+
       firebase.database().ref(Cookies.get("yourroom")).set(null);
     }
     Cookies.remove("username");
@@ -23,6 +28,11 @@ export default async function deleteonescape() {
         .ref(Cookies.get("yourroom") + "/users/" + Cookies.get("username"))
         .set(null);
     } else {
+      firebase
+        .database()
+        .ref(Cookies.get("yourroom") + "/killapp/")
+        .set(true);
+
       firebase.database().ref(Cookies.get("yourroom")).set(null);
     }
     //console.log("I  LEFT");

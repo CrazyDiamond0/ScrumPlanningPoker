@@ -4,6 +4,7 @@ import GamePage from "./GamePage";
 import Cookies from "js-cookie";
 import joinuser from "./components/joinuser";
 import checkifexits from "./components/checkifexists";
+import "./MainPage.css";
 
 export default function MainPage() {
   useEffect(() => {
@@ -15,7 +16,7 @@ export default function MainPage() {
     }
   }, []);
   const [roomdoesntexist, setRoomDoesntexist] = useState("");
-  const [inputroomnumber, setInputroomnumber] = useState(0);
+  const [inputroomnumber, setInputroomnumber] = useState();
   const [submiroomnumber, setSumbitRoomNumber] = useState(false);
   const handleChange = (e) => {
     setInputroomnumber(e.target.value);
@@ -26,23 +27,44 @@ export default function MainPage() {
       {submiroomnumber === true ? (
         <GamePage />
       ) : (
-        <div>
-          <input
-            type="number"
-            value={inputroomnumber}
-            onChange={handleChange}
-          />
-          <button onClick={joinGamePage}>Join room</button>
+        <div className="mainpage-container">
+          <div className="container">
+            <div className="mainpagelabel">
+              Scrum Poker <i className="far fa-hand-peace"></i>
+            </div>
+            <div className="inputroom input-group">
+              <input
+                placeholder="Enter the room id"
+                className=" form-control"
+                type="text"
+                value={inputroomnumber}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <button
+                className="mainpagebutton btn btn-primary"
+                onClick={joinGamePage}
+              >
+                Join room
+              </button>
 
-          <button onClick={() => createGamePage()}>Create Room</button>
-          <button
+              <button
+                className="mainpagebutton btn btn-primary"
+                onClick={() => createGamePage()}
+              >
+                Create Room
+              </button>
+            </div>
+            {/* <button
             onClick={() =>
               checkifexits(inputroomnumber).then((value) => console.log(value))
             }
           >
             functiontest
-          </button>
-          <div>{roomdoesntexist}</div>
+          </button> */}
+            <div>{roomdoesntexist}</div>
+          </div>
         </div>
       )}
     </div>

@@ -1,14 +1,15 @@
 import firebase from "./firebase";
 
 export default function database(random) {
-  console.log("AM INTRAT IN DB");
+  //console.log("AM INTRAT IN DB");
   const room = {
-    result: 0,
+    killapp: false,
     roomsubject: "null",
     users: {
       master: {
-        value: 0,
+        value: "null",
         didfinish: false,
+        allowselecting: true,
       },
     },
   };
